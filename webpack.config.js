@@ -13,6 +13,31 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 	inject: 'body'
 });
 
+const devPlugins = [
+	HtmlWebpackPluginConfig,
+	new ExtractTextPlugin("css/app-[hash].css"),
+	new webpack.DefinePlugin({
+		'process.env': {
+			NODE_ENV: JSON.stringify('development'),
+		},
+	}),
+];
+
+const prodPlugins = [
+	HtmlWebpackPluginConfig,
+	new ExtractTextPlugin("css/app-[hash].css"),
+	new webpack.DefinePlugin({
+		'process.env': {
+			NODE_ENV: JSON.stringify('production'),
+		},
+	}),
+	new webpack.optimize.UglifyJsPlugin({
+		compress:{
+			warnings: true
+		}
+	})
+];
+
 
 module.exports = {
 	entry: [
@@ -31,13 +56,12 @@ module.exports = {
 				query: {
 					presets: ['es2015', 'react']
 				}
-			},
-			{
+			}, {
 				test: /\.css$/,
-				loader: ExtractTextPlugin.extract('style-loader', 'css!postcss')
+				loader: ExtractTextPlugin.extract('style-loader', 'css?sourceMap!postcss')
 			}, {
 				test: /\.(scss|sass)$/,
-				loader: ExtractTextPlugin.extract('style-loader', 'css!postcss!sass')
+				loader: ExtractTextPlugin.extract('style-loader', 'css?sourceMap!postcss!sass?sourceMap')
 			}
 		]
 	},
@@ -46,31 +70,18 @@ module.exports = {
 		indentedSyntax: true
 	},
 
-	postcss: function() {
+	postcss: () => {
 		return [
 			autoprefixer
 		];
 	},
 
-	devtools: DEVELOPMENT ? "source-map" : '',
+	devtool: DEVELOPMENT ? "source-map" : '',
 
 	devServer: {
 		inline: true,
 		port: 3000
 	},
 
-	plugins: [
-		HtmlWebpackPluginConfig,
-		new ExtractTextPlugin("css/app-[hash].css"),
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-			},
-		}),
-		new webpack.optimize.UglifyJsPlugin({
-			compress:{
-				warnings: !!PRODUCTION
-			}
-		})
-	]
+	plugins: DEVELOPMENT ? devPlugins : prodPlugins
 };
