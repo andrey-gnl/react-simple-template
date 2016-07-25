@@ -12,10 +12,12 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 	filename: 'index.html',
 	inject: 'body'
 });
-
-const devPlugins = [
+const basePlugins = [
 	HtmlWebpackPluginConfig,
 	new ExtractTextPlugin("css/app-[hash].css"),
+];
+
+const devPlugins = [
 	new webpack.DefinePlugin({
 		'process.env': {
 			NODE_ENV: JSON.stringify('development'),
@@ -24,8 +26,6 @@ const devPlugins = [
 ];
 
 const prodPlugins = [
-	HtmlWebpackPluginConfig,
-	new ExtractTextPlugin("css/app-[hash].css"),
 	new webpack.DefinePlugin({
 		'process.env': {
 			NODE_ENV: JSON.stringify('production'),
@@ -83,5 +83,5 @@ module.exports = {
 		port: 3000
 	},
 
-	plugins: DEVELOPMENT ? devPlugins : prodPlugins
+	plugins: basePlugins.concat(DEVELOPMENT ? devPlugins : prodPlugins)
 };
