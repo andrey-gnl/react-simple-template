@@ -1,5 +1,10 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+const webpack = require('webpack');
+
+const NODE_ENV          = process.env.NODE_ENV || 'development';
+const DEVELOPMENT       = NODE_ENV === 'development';
+const PRODUCTION        = NODE_ENV === 'production';
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -47,7 +52,7 @@ module.exports = {
 		];
 	},
 
-	devtools: "source-map",
+	devtools: DEVELOPMENT ? "source-map" : '',
 
 	devServer: {
 		inline: true,
@@ -56,6 +61,16 @@ module.exports = {
 
 	plugins: [
 		HtmlWebpackPluginConfig,
-		new ExtractTextPlugin("css/app-[hash].css")
+		new ExtractTextPlugin("css/app-[hash].css"),
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify(process.env.NODE_ENV),
+			},
+		}),
+		new webpack.optimize.UglifyJsPlugin({
+			compress:{
+				warnings: !!PRODUCTION
+			}
+		})
 	]
 };

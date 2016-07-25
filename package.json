@@ -35,6 +35,6 @@
   },
   "scripts": {
     "start": "webpack-dev-server --inline --content-base . --history-api-fallback",
-    "build": "rimraf ./build/ && webpack -p"
+    "build": "rimraf ./build/ && NODE_ENV=production webpack"
   }
 }
