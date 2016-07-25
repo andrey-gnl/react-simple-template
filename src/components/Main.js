@@ -6,14 +6,11 @@ export default function Main(props) {
 	return (
 		<div className="out">
 			<main className="main">
-				<Header />
 				<Wrapper>
 					<MainContainer />
 					{props.children}
 				</Wrapper>
-
 			</main>
-			<Footer />
 		</div>
 	)
 }
